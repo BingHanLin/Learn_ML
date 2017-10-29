@@ -85,7 +85,7 @@ if __name__ == '__main__':
     alpha = 0.0001                  # learning rate
 
     error_tolerance = 10e-5         # tolerance value of error
-    max_iter = 10000                  # maximum number of iterations
+    max_iter = 10000                # maximum number of iterations
     
     run()
 
