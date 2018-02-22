@@ -6,6 +6,7 @@ import random
 '''
 A code for gradient descent method.
 https://github.com/mattnedrich/GradientDescentExample
+https://blog.gtwang.org/statistics/standford-machine-learning-4/
 '''
 
 #===============================================================
