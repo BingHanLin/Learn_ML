@@ -1,5 +1,5 @@
 
-class Boundary_Condition():
+class Domain_Condition():
     def __init__(self, name):
         self.name = name
 

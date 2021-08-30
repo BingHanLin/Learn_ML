@@ -1,11 +1,10 @@
 import numpy as np
-from .boundaryCondition import Boundary_Condition
 import tensorflow as tf
 
 
-class Dirichlet(Boundary_Condition):
+class Initial_Condition():
     def __init__(self, inputs: dict, value, name="dirichlet"):
-        super().__init__(name)
+        self._name = name
         x_inputs, t_inputs = tf.meshgrid(inputs['x'], inputs['t'])
         self._x_inputs = tf.reshape(x_inputs, [-1])
         self._t_inputs = tf.reshape(t_inputs, [-1])
@@ -13,6 +12,8 @@ class Dirichlet(Boundary_Condition):
         self._value = value
 
     def train(self, network, optimizer):
+
+        # for i in range(5):
         with tf.GradientTape() as tape:
             inputs = tf.stack([self._x_inputs, self._t_inputs], -1)
             results = network(inputs)
@@ -25,5 +26,5 @@ class Dirichlet(Boundary_Condition):
 
 if __name__ == '__main__':
     x = tf.linspace(0, 1, 3)
-    t = tf.linspace(0, 1, 5)
-    condition = Dirichlet({'x': x, 't': t}, 0.0)
+    t = tf.linspace(0, 0, 1)
+    condition = Initial_Condition({'x': x, 't': t}, 0.0)
