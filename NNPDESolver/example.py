@@ -11,7 +11,7 @@ lx = 2
 nx = 20
 dx = lx / (nx-1)
 
-lt = 0.04
+lt = 0.1
 nt = 4
 dt = lt / (nt-1)
 
@@ -38,7 +38,7 @@ model = Solver_Model()
 model.add_boundary_condition(bc)
 model.add_initial_condition(ic)
 model.set_domain_condition(domain)
-model.train(500)
+model.train(15000)
 
 # x = np.linspace(0.0, lx, nx)
 # t = np.linspace(0.0, lt, nt)
@@ -58,9 +58,11 @@ ax1.set_ylabel('Phi')
 # create objects that will change in the animation. These are
 # initially empty, and will be given new values for each frame
 # in the animation.
-n = 2
 line1, = ax1.plot(x,  phi_init, 'gray', lw=2)
-line2, = ax1.plot(x,  result[n*nx:(n+1)*nx], 'r-.', lw=2)
+line2, = ax1.plot(x,  result[0:nx], 'r-.', lw=2)
+line3, = ax1.plot(x,  result[nx:2*nx], 'b:', lw=2)
+line4, = ax1.plot(x,  result[2*nx:3*nx], 'g:', lw=2)
+line5, = ax1.plot(x,  result[3*nx:4*nx], 'y:', lw=2)
 
 plt.show()
 

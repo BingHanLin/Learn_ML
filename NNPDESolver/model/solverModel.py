@@ -7,27 +7,18 @@ from tensorflow.keras import initializers
 class Solver_Model():
     def __init__(self):
 
-        self._optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
+        self._optimizer = tf.keras.optimizers.Adam(learning_rate=0.0005)
         self._metrics = tf.keras.metrics.Mean(0.001)
 
         initializer = tf.keras.initializers.RandomUniform(minval=0., maxval=1.)
 
         inputs = tf.keras.Input(shape=(2,), name="inputs")
         x = tf.keras.layers.Dense(
-            units=20, activation=tf.nn.sigmoid,
-            kernel_initializer='random_uniform', name='layer1')(inputs)
+            units=20, activation=tf.nn.sigmoid, name='layer1')(inputs)
         x = tf.keras.layers.Dense(
-            units=20, activation=tf.nn.sigmoid,
-            kernel_initializer='random_uniform', name='layer2')(x)
+            units=10, activation=tf.nn.sigmoid, name='layer2')(x)
         x = tf.keras.layers.Dense(
-            units=20, activation=tf.nn.sigmoid,
-            kernel_initializer='random_uniform', name='layer3')(x)
-        x = tf.keras.layers.Dense(
-            units=20, activation=tf.nn.sigmoid,
-            kernel_initializer='random_uniform', name='layer4')(x)
-        x = tf.keras.layers.Dense(
-            units=20, activation=tf.nn.sigmoid,
-            kernel_initializer='random_uniform', name='layer5')(x)
+            units=10, activation=tf.nn.sigmoid, name='layer3')(x)
         outputs = tf.keras.layers.Dense(units=1, name='output')(x)
 
         self._model = tf.keras.Model(inputs=inputs, outputs=outputs)
@@ -72,4 +63,5 @@ class Solver_Model():
         for condition in self._boundary_conditions:
             condition.train(self._model, self._optimizer)
 
-        self._domain_condition.train(self._model, self._optimizer)
+        if self._domain_condition != None:
+            self._domain_condition.train(self._model, self._optimizer)
