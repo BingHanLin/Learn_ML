@@ -7,18 +7,24 @@ from tensorflow.keras import initializers
 class Solver_Model():
     def __init__(self):
 
-        self._optimizer = tf.keras.optimizers.Adam(learning_rate=0.0005)
+        self._optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
         self._metrics = tf.keras.metrics.Mean(0.001)
 
-        initializer = tf.keras.initializers.RandomUniform(minval=0., maxval=1.)
+        initializer = tf.keras.initializers.GlorotNormal()
 
         inputs = tf.keras.Input(shape=(2,), name="inputs")
         x = tf.keras.layers.Dense(
             units=20, activation=tf.nn.sigmoid, name='layer1')(inputs)
         x = tf.keras.layers.Dense(
-            units=10, activation=tf.nn.sigmoid, name='layer2')(x)
+            units=20, activation=tf.nn.relu, name='layer2')(x)
         x = tf.keras.layers.Dense(
-            units=10, activation=tf.nn.sigmoid, name='layer3')(x)
+            units=20, activation=tf.nn.sigmoid, name='layer3')(x)
+        x = tf.keras.layers.Dense(
+            units=20, activation=tf.nn.relu, name='layer4')(x)
+        x = tf.keras.layers.Dense(
+            units=20, activation=tf.nn.sigmoid, name='layer5')(x)
+        x = tf.keras.layers.Dense(
+            units=20, activation=tf.nn.relu, name='layer6')(x)
         outputs = tf.keras.layers.Dense(units=1, name='output')(x)
 
         self._model = tf.keras.Model(inputs=inputs, outputs=outputs)
@@ -47,6 +53,13 @@ class Solver_Model():
 
     def train(self, epochs):
         tf.print("Start training")
+
+        self.losses_number = len(self._initial_conditions) + \
+            len(self._boundary_conditions)
+
+        if(self._domain_condition != None):
+            self.losses_number = self.losses_number+1
+
         self._metrics.reset_states()
 
         for epoch in range(epochs):
@@ -57,11 +70,24 @@ class Solver_Model():
 
     @tf.function
     def train_epoch(self):
-        for condition in self._initial_conditions:
-            condition.train(self._model, self._optimizer)
+        with tf.GradientTape() as tape:
 
-        for condition in self._boundary_conditions:
-            condition.train(self._model, self._optimizer)
+            if(self._domain_condition != None):
+                loss_total = tf.cast(self._domain_condition.computeLoss(
+                    self._model, self._optimizer)/self.losses_number, tf.float32)
+            else:
+                loss_total = tf.cast(0.0, tf.float32)
 
-        if self._domain_condition != None:
-            self._domain_condition.train(self._model, self._optimizer)
+            for condition in self._initial_conditions:
+                loss_total = loss_total + tf.cast(condition.computeLoss(
+                    self._model, self._optimizer)/self.losses_number, tf.float32)
+
+            for condition in self._boundary_conditions:
+                loss_total = loss_total + tf.cast(condition.computeLoss(
+                    self._model, self._optimizer)/self.losses_number, tf.float32)
+
+            tf.print(loss_total)
+
+        trainable_vars = self._model.trainable_variables
+        gradients = tape.gradient(loss_total, trainable_vars)
+        self._optimizer.apply_gradients(zip(gradients, trainable_vars))

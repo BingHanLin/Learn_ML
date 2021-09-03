@@ -13,18 +13,13 @@ class Initial_Condition():
         self._value = tf.convert_to_tensor(value, dtype=tf.float32)
         self._value = tf.reshape(self._value, [len(self._value), 1])
 
-    def train(self, network, optimizer):
+    def computeLoss(self, network, optimizer):
+        inputs = tf.stack([self._x_inputs, self._t_inputs], -1)
+        results = network(inputs)
 
-        with tf.GradientTape() as tape:
-            inputs = tf.stack([self._x_inputs, self._t_inputs], -1)
-            results = network(inputs)
-            
-            loss = tf.reduce_mean(tf.square(results-self._value))
+        loss = tf.reduce_mean(tf.square(results-self._value))
 
-        trainable_vars = network.trainable_variables
-        gradients = tape.gradient(loss, trainable_vars)
-
-        optimizer.apply_gradients(zip(gradients, trainable_vars))
+        return loss
 
 
 if __name__ == '__main__':

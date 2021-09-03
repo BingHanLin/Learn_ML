@@ -10,20 +10,17 @@ class Advection1D(Domain_Condition):
         self._x_inputs = tf.reshape(x_inputs, [-1])
         self._t_inputs = tf.reshape(t_inputs, [-1])
 
-    def train(self, network, optimizer):
-        with tf.GradientTape() as tape:
-            inputs = tf.stack([self._x_inputs, self._t_inputs], -1)
-            results = network(inputs)
+    def computeLoss(self, network, optimizer):
+        inputs = tf.stack([self._x_inputs, self._t_inputs], -1)
+        results = network(inputs)
 
-            dphidt = tf.gradients(results, self._t_inputs)[0]
-            dphidx = tf.gradients(results, self._x_inputs)[0]
+        dphidt = tf.gradients(results, self._t_inputs)[0]
+        dphidx = tf.gradients(results, self._x_inputs)[0]
 
-            governing_eq = dphidt + dphidx
-            loss = tf.reduce_sum(tf.square(governing_eq))
+        governing_eq = dphidt + dphidx
+        loss = tf.reduce_sum(tf.square(governing_eq))
 
-        trainable_vars = network.trainable_variables
-        gradients = tape.gradient(loss, trainable_vars)
-        optimizer.apply_gradients(zip(gradients, trainable_vars))
+        return loss
 
 
 if __name__ == '__main__':

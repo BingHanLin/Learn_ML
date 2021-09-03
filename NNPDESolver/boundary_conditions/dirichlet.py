@@ -12,15 +12,13 @@ class Dirichlet(Boundary_Condition):
 
         self._value = value
 
-    def train(self, network, optimizer):
-        with tf.GradientTape() as tape:
-            inputs = tf.stack([self._x_inputs, self._t_inputs], -1)
-            results = network(inputs)
-            loss = tf.reduce_mean(tf.square(results-self._value))
+    def computeLoss(self, network, optimizer):
+        inputs = tf.stack([self._x_inputs, self._t_inputs], -1)
+        results = network(inputs)
 
-        trainable_vars = network.trainable_variables
-        gradients = tape.gradient(loss, trainable_vars)
-        optimizer.apply_gradients(zip(gradients, trainable_vars))
+        loss = tf.reduce_mean(tf.square(results-self._value))
+
+        return loss
 
 
 if __name__ == '__main__':
