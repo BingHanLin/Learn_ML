@@ -7,7 +7,7 @@ from tensorflow.keras import initializers
 class Solver_Model():
     def __init__(self):
 
-        self._optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+        self._optimizer = tf.keras.optimizers.Adam(learning_rate=0.005)
         self._metrics = tf.keras.metrics.Mean(0.001)
 
         initializer = tf.keras.initializers.GlorotNormal()
@@ -16,15 +16,19 @@ class Solver_Model():
         x = tf.keras.layers.Dense(
             units=20, activation=tf.nn.sigmoid, name='layer1')(inputs)
         x = tf.keras.layers.Dense(
-            units=20, activation=tf.nn.relu, name='layer2')(x)
+            units=20, activation=tf.nn.sigmoid, name='layer2')(x)
         x = tf.keras.layers.Dense(
             units=20, activation=tf.nn.sigmoid, name='layer3')(x)
         x = tf.keras.layers.Dense(
-            units=20, activation=tf.nn.relu, name='layer4')(x)
+            units=20, activation=tf.nn.sigmoid, name='layer4')(x)
         x = tf.keras.layers.Dense(
             units=20, activation=tf.nn.sigmoid, name='layer5')(x)
         x = tf.keras.layers.Dense(
-            units=20, activation=tf.nn.relu, name='layer6')(x)
+            units=20, activation=tf.nn.sigmoid, name='layer6')(x)
+        x = tf.keras.layers.Dense(
+            units=20, activation=tf.nn.sigmoid, name='layer7')(x)
+        x = tf.keras.layers.Dense(
+            units=20, activation=tf.nn.sigmoid, name='layer8')(x)
         outputs = tf.keras.layers.Dense(units=1, name='output')(x)
 
         self._model = tf.keras.Model(inputs=inputs, outputs=outputs)
@@ -75,18 +79,23 @@ class Solver_Model():
             if(self._domain_condition != None):
                 loss_total = tf.cast(self._domain_condition.computeLoss(
                     self._model, self._optimizer)/self.losses_number, tf.float32)
+                # tf.print("domain: ", loss_total)
             else:
                 loss_total = tf.cast(0.0, tf.float32)
 
             for condition in self._initial_conditions:
-                loss_total = loss_total + tf.cast(condition.computeLoss(
+                loss = tf.cast(condition.computeLoss(
                     self._model, self._optimizer)/self.losses_number, tf.float32)
+                # tf.print("initial: ", loss)
+                loss_total = loss_total + loss
 
             for condition in self._boundary_conditions:
-                loss_total = loss_total + tf.cast(condition.computeLoss(
+                loss = tf.cast(condition.computeLoss(
                     self._model, self._optimizer)/self.losses_number, tf.float32)
+                # tf.print("boundary: ", loss)
+                loss_total = loss_total + loss
 
-            tf.print(loss_total)
+            tf.print("total: ", loss_total)
 
         trainable_vars = self._model.trainable_variables
         gradients = tape.gradient(loss_total, trainable_vars)

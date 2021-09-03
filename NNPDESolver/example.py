@@ -27,8 +27,6 @@ phi_init = np.zeros(nx)
 sine_wave = np.linspace(0, 2*np.pi, int(1.5 / dx + 1) - int(.5 / dx))
 phi_init[int(.5 / dx):int(1.5 / dx + 1)] += np.sin(sine_wave)
 
-phi_init = tf.convert_to_tensor(phi_init, dtype=tf.float32, name="phi_init")
-phi_init = tf.reshape(phi_init, [len(phi_init), 1])
 
 ic = Initial_Condition({'x': x, 't': t_0}, phi_init)
 bc = Dirichlet({'x': x_bc, 't': t}, 0.0)
