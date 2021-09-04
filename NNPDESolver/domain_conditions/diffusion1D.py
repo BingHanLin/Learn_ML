@@ -3,7 +3,7 @@ from .domainCondition import Domain_Condition
 import tensorflow as tf
 
 
-class HeatTransfer1D(Domain_Condition):
+class Diffusion1D(Domain_Condition):
     def __init__(self, inputs: dict, name="dirichlet"):
         super().__init__(name)
         x_inputs, t_inputs = tf.meshgrid(inputs['x'], inputs['t'])
@@ -33,4 +33,4 @@ class HeatTransfer1D(Domain_Condition):
 if __name__ == '__main__':
     x = tf.linspace(0, 1, 3)
     t = tf.linspace(0, 1, 5)
-    condition = HeatTransfer1D({'x': x, 't': t})
+    condition = Diffusion1D({'x': x, 't': t})

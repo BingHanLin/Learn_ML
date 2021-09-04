@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from boundary_conditions import Dirichlet
-from domain_conditions import HeatTransfer1D
+from domain_conditions import Diffusion1D
 from initial_conditions import Initial_Condition
 
 from model import Solver_Model
@@ -28,7 +28,7 @@ phi_init = np.cos(phi_init)+1.0
 ic = Initial_Condition({'x': x, 't': t_0}, phi_init)
 bc1 = Dirichlet({'x': x_bc1, 't': t[1:]}, 2.0)
 bc2 = Dirichlet({'x': x_bc2, 't': t[1:]}, 0.0)
-domain = HeatTransfer1D({'x': x, 't': t[1:]})
+domain = Diffusion1D({'x': x, 't': t[1:]})
 
 model = Solver_Model()
 model.add_initial_condition(ic)

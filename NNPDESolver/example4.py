@@ -2,7 +2,7 @@ from matplotlib import pyplot  # and the useful plotting library
 import numpy  # loading our favorite library
 import matplotlib.pyplot as plt
 from boundary_conditions import Dirichlet
-from domain_conditions import HeatTransfer1D
+from domain_conditions import Diffusion1D
 from domain_conditions import Advection1D
 from initial_conditions import Initial_Condition
 
@@ -32,16 +32,16 @@ phi_init[int(0.5 / dx):int(1.5 / dx + 1)] += np.sin(sine_wave)
 
 
 ic = Initial_Condition({'x': x, 't': t_0}, phi_init)
-bc1 = Dirichlet({'x': x_bc1, 't': t}, 1.0)
-bc2 = Dirichlet({'x': x_bc2, 't': t}, 1.0)
-domain = HeatTransfer1D({'x': x, 't': t})
+bc1 = Dirichlet({'x': x_bc1, 't': t[1:]}, 1.0)
+bc2 = Dirichlet({'x': x_bc2, 't': t[1:]}, 1.0)
+domain = Diffusion1D({'x': x, 't': t[1:]})
 
 model = Solver_Model()
 model.add_initial_condition(ic)
 model.add_boundary_condition(bc1)
 model.add_boundary_condition(bc2)
 model.set_domain_condition(domain)
-model.train(100000)
+model.train(200000)
 
 result = model.predict(x, t)
 
