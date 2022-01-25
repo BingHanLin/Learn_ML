@@ -8,7 +8,7 @@ class Solver_Model():
     def __init__(self):
 
         self._optimizer = tf.keras.optimizers.Adam(learning_rate=0.005)
-        self._metrics = tf.keras.metrics.Mean(0.001)
+        self._metrics = tf.keras.metrics.Mean()
 
         initializer = tf.keras.initializers.GlorotNormal()
 
@@ -95,7 +95,7 @@ class Solver_Model():
                 # tf.print("boundary: ", loss)
                 loss_total = loss_total + loss
 
-            tf.print("total: ", loss_total)
+            # tf.print("total: ", loss_total)
 
         trainable_vars = self._model.trainable_variables
         gradients = tape.gradient(loss_total, trainable_vars)

@@ -36,7 +36,7 @@ model = Solver_Model()
 model.add_boundary_condition(bc)
 model.add_initial_condition(ic)
 model.set_domain_condition(domain)
-model.train(50000)
+model.train(5000)
 
 # x = np.linspace(0.0, lx, nx)
 # t = np.linspace(0.0, lt, nt)
