@@ -41,7 +41,7 @@ model.add_initial_condition(ic)
 model.add_boundary_condition(bc1)
 model.add_boundary_condition(bc2)
 model.set_domain_condition(domain)
-model.train(5000)
+model.train(20000)
 
 result = model.predict(x, t)
 
